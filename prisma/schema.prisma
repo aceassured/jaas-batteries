@@ -32,9 +32,9 @@ model QrDeviceInfo {
 
   // Relation to User
   userId          Int
-  user            User      @relation(fields: [userId], references: [id])
+  user            User      @relation(fields: [userId], references: [id],onDelete: Cascade)
   batteryId Int
-  battery Battery @relation(fields: [batteryId],references: [id])
+  battery Battery @relation(fields: [batteryId],references: [id],onDelete: Cascade)
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -58,8 +58,8 @@ model DeviceComplaint {
   ticketNumber   String?   @unique
 
   // Relation fields
-  user           User      @relation(fields: [userId], references: [id])
-  device         QrDeviceInfo @relation(fields: [deviceId], references: [id])
+  user           User      @relation(fields: [userId], references: [id],onDelete: Cascade)
+  device         QrDeviceInfo @relation(fields: [deviceId], references: [id],onDelete: Cascade)
 
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt

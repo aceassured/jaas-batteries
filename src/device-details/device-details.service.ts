@@ -8,7 +8,6 @@ import { CreateQrDeviceInfoDto } from './dto/create-device-details-dto';
 import { catchBlock } from '../common/catch-block';
 import { CreateDeviceComplaintDto } from './dto/create-device-complaint.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { connect } from 'http2';
 
 @Injectable()
 export class DeviceDetailsService {

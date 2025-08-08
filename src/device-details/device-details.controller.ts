@@ -29,7 +29,7 @@ import {
   Get,
 } from '@nestjs/common';
 import { DeviceDetailsService } from './device-details.service';
-import { CreateQrDeviceInfoDto } from './dto/create-device-details-dto';
+// import { CreateQrDeviceInfoDto } from './dto/create-device-details-dto';
 import { CreateDeviceComplaintDto } from './dto/create-device-complaint.dto';
 
 @Controller('device-details')
