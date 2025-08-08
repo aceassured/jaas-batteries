@@ -142,7 +142,7 @@ export class DeviceDetailsService {
 
   async registerDevice(qrCodeId: string,userId:number) {
     try {
-      const battery = await this.prisma.battery.findUnique({
+      const battery = await this.prisma.battery.findFirst({
         where: {
           qr_code_id: qrCodeId,
         },
@@ -154,14 +154,14 @@ export class DeviceDetailsService {
 
       const newRegistedBattery=await this.prisma.qrDeviceInfo.create({
         data:{
-          battery:{
-            connect:{
-              id:battery.id
-            }
-          },
           user:{
             connect:{
               id:userId
+            }
+          },
+          battery:{
+            connect:{
+              id:battery.id
             }
           }
         }

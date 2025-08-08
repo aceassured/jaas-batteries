@@ -16,60 +16,56 @@ datasource db {
 // schema.prisma
 
 model User {
-  id            Int @id @default(autoincrement())
-  phone         String   @unique
-  otp           String?
-  otpExpiresAt  DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  QrDevices QrDeviceInfo[]
+  id               Int               @id @default(autoincrement())
+  phone            String            @unique
+  otp              String?
+  otpExpiresAt     DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  QrDevices        QrDeviceInfo[]
   DeviceComplaints DeviceComplaint[]
 }
 
 model QrDeviceInfo {
-  id              Int   @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   purchasedDate DateTime @default(now())
 
   // Relation to User
-  userId          Int
-  user            User      @relation(fields: [userId], references: [id],onDelete: Cascade)
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   batteryId Int
-  battery Battery @relation(fields: [batteryId],references: [id],onDelete: Cascade)
+  battery   Battery @relation(fields: [batteryId], references: [id], onDelete: Cascade)
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   DeviceComplaints DeviceComplaint[]
-
 }
-
 
 model DeviceComplaint {
-  id             Int       @id @default(autoincrement())
-  userId         Int
-  deviceId       Int
+  id       Int @id @default(autoincrement())
+  userId   Int
+  deviceId Int
 
-  complaintType  String    // e.g., "Battery issue", "Charging problem"
-  description    String?   // Optional additional description from user
-  status         String    @default("Pending") // "Pending", "In Progress", "Resolved", "Rejected"
-  raisedAt       DateTime  @default(now())
-  resolvedAt     DateTime? // Set when resolved
+  complaintType String // e.g., "Battery issue", "Charging problem"
+  description   String? // Optional additional description from user
+  status        String    @default("Pending") // "Pending", "In Progress", "Resolved", "Rejected"
+  raisedAt      DateTime  @default(now())
+  resolvedAt    DateTime? // Set when resolved
 
   // Optional admin or system-assigned ticket ID or reference number
-  ticketNumber   String?   @unique
+  ticketNumber String? @unique
 
   // Relation fields
-  user           User      @relation(fields: [userId], references: [id],onDelete: Cascade)
-  device         QrDeviceInfo @relation(fields: [deviceId], references: [id],onDelete: Cascade)
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device QrDeviceInfo @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-
-
 model Battery {
-  id              Int      @id @default(autoincrement())
-  qr_code_id      String   @unique
+  id              Int            @id @default(autoincrement())
+  qr_code_id      String         @unique
   model_name      String?
   product_type    String?
   capacity_ah     Int?
@@ -77,7 +73,7 @@ model Battery {
   technology      String?
   warranty_months Int?
   description     String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  qrDevices QrDeviceInfo[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  qrDevices       QrDeviceInfo[]
 }
