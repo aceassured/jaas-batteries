@@ -3,11 +3,11 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { CreateQrDeviceInfoDto } from './dto/create-device-details-dto';
 import { catchBlock } from '../common/catch-block';
 import { CreateDeviceComplaintDto } from './dto/create-device-complaint.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class DeviceDetailsService {
@@ -143,31 +143,31 @@ export class DeviceDetailsService {
   async registerDevice(qrCodeId: string,userId:number) {
     try {
       const battery = await this.prisma.battery.findFirst({
-        where: {
-          qr_code_id: qrCodeId,
-        },
-      });
+        where:{
+          qr_code_id:qrCodeId
+        }
+      })
 
       if(!battery) {
         throw new BadRequestException('No battery found with the given qr code id')
       }
 
-      const newRegistedBattery=await this.prisma.qrDeviceInfo.create({
+      await this.prisma.qrDeviceInfo.create({
         data:{
-          user:{
-            connect:{
-              id:userId
-            }
-          },
-          battery:{
-            connect:{
-              id:battery.id
-            }
+         user:{
+          connect:{
+            id:userId
           }
+         },
+         battery:{
+          connect:{
+            id:battery.id
+          }
+         }
         }
       })
 
-      return {message:'New battery registed successfully!',newRegistedBattery}
+      return {message:'New battery registed successfully!'}
     } catch (error) {
      catchBlock(error)
     }
