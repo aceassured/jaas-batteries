@@ -156,7 +156,7 @@ export class DeviceDetailsService {
         data:{
           battery:{
             connect:{
-              id:battery?.id
+              id:battery.id
             }
           },
           user:{
