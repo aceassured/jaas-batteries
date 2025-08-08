@@ -36,18 +36,18 @@ import { CreateDeviceComplaintDto } from './dto/create-device-complaint.dto';
 export class DeviceDetailsController {
   constructor(private readonly deviceDetailsService: DeviceDetailsService) {}
 
-  @Post('add-device/:userId')
-  async addDeviceDetails(
-    @Body() dto: CreateQrDeviceInfoDto,
-    qrCodeData: { serialNumber: string; purchaseDate: string },
-    @Param('userId', ParseIntPipe) userId: number,
-  ) {
-    return this.deviceDetailsService.addDeviceDetails(
-      dto,
-      qrCodeData,
-      userId,
-    );
-  }
+  // @Post('add-device/:userId')
+  // async addDeviceDetails(
+  //   @Body() dto: CreateQrDeviceInfoDto,
+  //   qrCodeData: { serialNumber: string; purchaseDate: string },
+  //   @Param('userId', ParseIntPipe) userId: number,
+  // ) {
+  //   return this.deviceDetailsService.addDeviceDetails(
+  //     dto,
+  //     qrCodeData,
+  //     userId,
+  //   );
+  // }
 
   @Get('fetch-devices/:userId')
   async fetchAllDevices(@Param('userId', ParseIntPipe) userId: number) {
@@ -63,4 +63,11 @@ export class DeviceDetailsController {
   async fetchAllComplaints(@Param('deviceId', ParseIntPipe) deviceId: number) {
     return this.deviceDetailsService.fetchAllComplaints(deviceId);
   }
+
+  @Post('register-device/:userId/:qrCodeId')
+  async registerDevice(@Param('userId',ParseIntPipe) userId:number,@Param('qrCodeId') qrCodeId:string) {
+    return this.deviceDetailsService.registerDevice(qrCodeId,userId)
+  }
+
+
 }

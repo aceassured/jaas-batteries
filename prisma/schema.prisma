@@ -28,26 +28,18 @@ model User {
 
 model QrDeviceInfo {
   id              Int   @id @default(autoincrement())
-  serialNumber    String   @unique
-  purchaseDate    DateTime
-  brand           String?   // optional: brand name like HP, Canon
-  model           String?   // optional: model number
-  warrantyStatus  String?   // optional: e.g. "active", "expired"
-  warrantyPeriod  Int?      // optional: number of months or years
-  deviceType      String?   // optional: e.g. "Printer", "Scanner"
-  supportContact  String?   // optional: customer care contact
-  firmwareVersion String?   // optional: firmware or software version
-  registeredTo    String?   // optional: name/email of registered user
-  location        String?   // optional: installation location
-  extraInfo       Json?     // optional: any raw key-value object from QR
+  purchasedDate DateTime @default(now())
 
   // Relation to User
   userId          Int
   user            User      @relation(fields: [userId], references: [id])
+  batteryId Int
+  battery Battery @relation(fields: [batteryId],references: [id])
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   DeviceComplaints DeviceComplaint[]
+
 }
 
 
@@ -71,4 +63,21 @@ model DeviceComplaint {
 
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+}
+
+
+
+model Battery {
+  id              Int      @id @default(autoincrement())
+  qr_code_id      String   @unique
+  model_name      String?
+  product_type    String?
+  capacity_ah     Int?
+  voltage         String?
+  technology      String?
+  warranty_months Int?
+  description     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  battery QrDeviceInfo[]
 }

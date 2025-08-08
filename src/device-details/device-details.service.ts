@@ -8,44 +8,45 @@ import { CreateQrDeviceInfoDto } from './dto/create-device-details-dto';
 import { catchBlock } from '../common/catch-block';
 import { CreateDeviceComplaintDto } from './dto/create-device-complaint.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { connect } from 'http2';
 
 @Injectable()
 export class DeviceDetailsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async addDeviceDetails(
-    body: CreateQrDeviceInfoDto,
-    qrCodeData: { serialNumber: string; purchaseDate: string },
-    userId: number,
-  ) {
-    try {
-      const { serialNumber, purchaseDate } = body;
+  // async addDeviceDetails(
+  //   body: CreateQrDeviceInfoDto,
+  //   qrCodeData: { serialNumber: string; purchaseDate: string },
+  //   userId: number,
+  // ) {
+  //   try {
+  //     const { serialNumber, purchaseDate } = body;
 
-      // Check if serial number and purchase date match QR code response
-      if (
-        qrCodeData.serialNumber !== serialNumber ||
-        qrCodeData.purchaseDate !== purchaseDate
-      ) {
-        throw new BadRequestException(
-          'Device details do not match the QR code',
-        );
-      }
+  //     // Check if serial number and purchase date match QR code response
+  //     if (
+  //       qrCodeData.serialNumber !== serialNumber ||
+  //       qrCodeData.purchaseDate !== purchaseDate
+  //     ) {
+  //       throw new BadRequestException(
+  //         'Device details do not match the QR code',
+  //       );
+  //     }
 
-      await this.prisma.qrDeviceInfo.create({
-        data: {
-          ...body,
-          user: {
-            connect: {
-              id: userId,
-            },
-          },
-        },
-      });
-      return { message: 'New device added successfully!' };
-    } catch (err) {
-      catchBlock(err);
-    }
-  }
+  //     await this.prisma.qrDeviceInfo.create({
+  //       data: {
+  //         ...body,
+  //         user: {
+  //           connect: {
+  //             id: userId,
+  //           },
+  //         },
+  //       },
+  //     });
+  //     return { message: 'New device added successfully!' };
+  //   } catch (err) {
+  //     catchBlock(err);
+  //   }
+  // }
 
   async fetchAllDeviceDetails(id: number) {
     try {
@@ -74,14 +75,12 @@ export class DeviceDetailsService {
         complaintType,
         description,
         serialNumber,
-        purchaseDate,
       } = dto;
 
       // 1. Verify device with serialNumber & purchaseDate
       const device = await this.prisma.qrDeviceInfo.findFirst({
         where: {
-          serialNumber,
-          purchaseDate: new Date(purchaseDate),
+          id:deviceId
         },
       });
 
@@ -123,24 +122,57 @@ export class DeviceDetailsService {
     }
   }
 
-  async fetchAllComplaints(id:number) {
+  async fetchAllComplaints(id: number) {
     try {
       const allComplaints = await this.prisma.deviceComplaint.findMany({
         where: {
-          device:{
-            id:id
-          }
+          device: {
+            id: id,
+          },
         },
       });
 
       return {
         message: `Fetched all the device complaint details of device ${id}`,
-        allComplaints
+        allComplaints,
       };
     } catch (err) {
       catchBlock(err);
     }
   }
-  
+
+  async registerDevice(qrCodeId: string,userId:number) {
+    try {
+      const battery = await this.prisma.battery.findUnique({
+        where: {
+          qr_code_id: qrCodeId,
+        },
+      });
+
+      if(!battery) {
+        throw new BadRequestException('No battery found with the given qr code id')
+      }
+
+      const newRegistedBattery=await this.prisma.qrDeviceInfo.create({
+        data:{
+          battery:{
+            connect:{
+              id:battery?.id
+            }
+          },
+          user:{
+            connect:{
+              id:userId
+            }
+          }
+        }
+      })
+
+      return {message:'New battery registed successfully!',newRegistedBattery}
+    } catch (error) {
+     catchBlock(error)
+    }
+  }
+
 
 }
